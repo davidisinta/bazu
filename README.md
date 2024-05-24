@@ -1,4 +1,4 @@
-# AI Interviewer
+# Bazu - your AI Interviewer
 
 ## Table of Contents
 1. [Overview](#overview)
