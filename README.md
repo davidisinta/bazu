@@ -52,10 +52,10 @@ An AI interviewer designed to simulate real interview scenarios, provide feedbac
 ## Sprints
 ### Sprint 1: May 24 - May 26
 - Set up project repository and initialize README
-- Research and define AI models to be used
-- Plan overall architecture
+- Research and define AI models to be used - (complete part 1 of hackathon)
 
 ### Sprint 2: May 27 - May 29
+- Plan overall architecture - wireframes plus mockups 
 - Set up basic backend with session management
 - Start developing AI integration (basic response system)
 
