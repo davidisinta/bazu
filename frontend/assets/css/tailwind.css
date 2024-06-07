@@ -1,0 +1,39 @@
+@import "primeicons/primeicons.css";
+
+
+@layer tailwind-base {
+    @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+
+}
+
+
+
+@layer base {
+  html {
+    @apply h-fit;
+  }
+  body {
+    @apply text-black   bg-slate-50  relative dark:text-white dark:bg-gradient-to-tr dark:from-slate-800 dark:to-slate-950;
+  }
+  h1 {
+    @apply font-bold text-3xl;
+  }
+  h2 {
+    @apply font-bold text-2xl;
+  }
+  h3 {
+    @apply font-bold text-xl;
+  }
+
+  input {
+    @apply bg-slate-50 dark:bg-slate-700;
+  }
+  button {
+    @apply px-3 py-2 rounded-lg bg-sky-800 text-white font-bold;
+  }
+}
