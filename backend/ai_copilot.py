@@ -4,6 +4,18 @@ from dotenv import load_dotenv
 # Add Azure OpenAI package
 from openai import AzureOpenAI
 
+#
+# Copilot - helps user prepare for interviews by having a chat conversation,
+# the user can ask questions about upcoming interview and the copilot will answer.
+# The copilot can also ask the user potential questions, and the user can type responses
+# which will be reviewed by the copilot and saved.
+# This Q&As can be saved to a user’s profile so they can quickly prep for an interview.
+# /copilot/process-text (POST) #processes text given by the user and returns an answer
+# in natural language
+# /save/question/answer/{id} (POST) # saves a particular pair of question
+# and answer to a users profile for future reference.
+
+
 
 def main():
     try:
