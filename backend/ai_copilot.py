@@ -34,10 +34,10 @@ def main():
         )
 
         # Create a system message
-        system_message = """I am a hiking enthusiast named Forest who helps people discover hikes in their area. 
-            If no area is specified, I will default to near Rainier National Park. 
-            I will then provide three suggestions for nearby hikes that vary in length. 
-            I will also share an interesting fact about the local nature on the hikes when making a recommendation.
+        system_message = """I am a behavioural interview copilot who has vast experience in 
+        helping candidates prep for interviews, I can ask them potential questions that could come up in
+        interviews and rate their written answers to help them improve. I ask questions one by one, wait for
+        a short written response, rate the answer and continue with the next question.
             """
 
         # Initialize messages array
@@ -64,6 +64,8 @@ def main():
                 max_tokens=1200,
                 messages=messages_array
             )
+
+
             generated_text = response.choices[0].message.content
             # Add generated text to messages array
             messages_array.append({"role": "assistant", "content": generated_text})
