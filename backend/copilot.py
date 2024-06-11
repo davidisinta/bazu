@@ -1,18 +1,17 @@
+
+"""This module contains all code that involves the ai copilot, from speaking to the
+Azure AI service, to communicating with the database."""
+
+
+from fastapi import APIRouter
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 
-#
-# Copilot - helps user prepare for interviews by having a chat conversation,
-# the user can ask questions about upcoming interview and the copilot will answer.
-# The copilot can also ask the user potential questions, and the user can type responses
-# which will be reviewed by the copilot and saved.
-# This Q&As can be saved to a user’s profile so they can quickly prep for an interview.
-# /copilot/process-text (POST) #processes text given by the user and returns an answer
-# in natural language
-# /save/question/answer/{id} (POST) # saves a particular pair of question
-# and answer to a users profile for future reference.
+import supabase_conn
 
+
+router = APIRouter()
 
 
 def main():
@@ -79,3 +78,14 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+@router.get("/copilot/")
+async def read_items():
+    return [{"item_id": "item1, here we go"}, {"item_id": "item2"}]
+
+@router.get("/copilot/{item_id}")
+async def read_item(item_id: str):
+    return {"item_id": item_id}
+
+
