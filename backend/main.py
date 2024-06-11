@@ -7,5 +7,5 @@ app.include_router(copilot.router)
 
 
 @app.get("/")
-def read_root():
-    return {"Heyyyyy": "Thereeeee!!!!"}
+def home():
+    return {"message": "Heyyyyyyy Thereeeee!!!!"}
