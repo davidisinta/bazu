@@ -3,7 +3,7 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
-import supabase_conn
+from supabase_conn import supabase
 
 
 router = APIRouter()
@@ -25,8 +25,13 @@ client = AzureOpenAI(
     api_version="2024-02-15-preview"
 )
 
-messages_array = []
+system_message = """I am a behavioural interview copilot who has vast experience in 
+        helping candidates prep for interviews, I can ask them potential questions that could come up in
+        interviews and rate their written answers to help them improve. I ask questions one by one, wait for
+        a short written response, rate the answer and continue with the next question.
+            """
 
+messages_array = [{"role": "system", "content": system_message}]
 
 @router.post("/copilot/message")
 async def send_message(message: Message):
@@ -34,11 +39,6 @@ async def send_message(message: Message):
     message = message.dict()
 
     global messages_array
-    if message["text"].lower() == "quit":
-        messages_array = []
-        return {"message": "Conversation ended. Start a new conversation by sending a message."}
-    if len(message["text"]) == 0:
-        return {"message": "Please enter a prompt."}
 
     messages_array.append({"role": "user", "content": message["text"]})
 
@@ -50,7 +50,13 @@ async def send_message(message: Message):
     )
 
     generated_text = response.choices[0].message.content
+
     messages_array.append({"role": "assistant", "content": generated_text})
+
+
+    # supabase tester on this module
+    response = supabase.table('Prep_QnA').select("*").execute()
+    print(response)
 
     return {"message": generated_text}
 
