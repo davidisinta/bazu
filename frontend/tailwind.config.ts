@@ -27,7 +27,7 @@ export default <Partial<Config>>{
     tailwindCrossbar,
     // addDynamicIconSelectors()
     addIconSelectors([
-      'mdi', 'mdi-light','eos-icons','arcticons',
+      'mdi', 'mdi-light','eos-icons','arcticons','game-icons'
     ]),
   ],
 };

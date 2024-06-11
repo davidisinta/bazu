@@ -1,116 +1,95 @@
 <template>
-  <div
-    class="grid grid-cols-4 gap-[10px] h-[90%] w-full items-start relative ml-2"
-  >
-    <List
-      :is-error="isError"
-      :selected-option="currentChat"
-      error-label="Error Loading Chats"
-      loading-label="Loading chats."
-      :is-loading="isLoading"
-      :create-mode="createMode"
-      :options="(labelledChats as Array<any>)"
-      :list-props="{
-        optionValue: 'id',
-        filter: true,
-        filterFields: ['title'],
-        optionLabel: 'label',
-        dataKey: 'id',
-        selectionMessage:
-          'Press Tab to explore the chat. To return, press escape and continue browsing other chats in this list.',
-        emptySelectionMessage: 'No chat selected',
-        emptyMessage: 'Loading Chats. ',
-        emptyFilterMessage:
-          'No Chats Found. Try using chat tags relating to the chat',
-        filterMessage: '{0} chats found. Use arrow keys to browse the result. ',
-        filterPlaceholder: 'Search Chat',
-      }"
-      @update-selection="updateCurrChat"
-    >
-      <template #previewSlot="slotProps">
-        <ChatPreview
-          @update-aria="
-            (ariaUpdate) => {
-              if (labelledChats?.length) {
-                labelledChats[slotProps.index].label = ariaUpdate;
-              }
-            }
-          "
-          :heading="slotProps.option.title"
-          :timestamp="slotProps.option.created_at"
-        />
-      </template>
-    </List>
+  <div class="min-h-screen w-full  ">
+    <div class="w-[90%] mx-auto pt-4"> 
+      <button @click="interviewMode=!interviewMode" >{{ interviewMode?'Stop':'Start' }}</button>
+    </div>
+    <div class="grid grid-cols-4 h-screen w-[90%] mx-auto">
+      <div class="col-span-1 pt-4">
+        <h3>
+          AI Audio
+          <button
+            @click="isAudioOn = !isAudioOn"
+            :class="`${isAudioOn ? 'bg-green-400' : 'bg-red-600'}`"
+          >
+            {{ isAudioOn ? "On" : "Off" }}
+            <Icon
+              :name="`${
+                isAudioOn ? 'iconoir:voice-check' : 'iconoir:voice-xmark'
+              }`"
+              size="32"
+            />
+          </button>
+        </h3>
 
-    <div
-      class="col-span-3 h-screen overflow-y-scroll scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-slate-200"
-    >
-      <NuxtPage :page-key="(route) => route.fullPath" :keepalive="false" />
+        <div class="my-2">AI questions populated here:</div>
+        <div class="my-2">User here: {{ result }}</div>
+      </div>
+      <div class="col-span-2 flex gap-4 flex-col h-full p-2">
+        <div
+          class="bg-white h-[60%] rounded-lg border-2 border-gray-400 grid place-items-center"
+        >
+          <p>User Video Here</p>
+        </div>
+        <div class="w-full flex justify-between">
+          <input
+            type="text"
+            placeholder="Type Something"
+            class="p-2 bg-white rounded-lg border-2 border-gray-400 w-[90%]"
+          />
+          <button @click="controlSpeech">
+          
+            <Icon :name="`${isListening?'ic:round-settings-voice':'ic:round-keyboard-voice'}`" size="32" />
+          </button>
+        </div>
+      </div>
+      <div class="col-span-1">
+
+        <span>Time: {{ timeSpent }}</span>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-interface previewChat extends Chats {
-  label: string;
-}
-// const { chats, chat, isError, isLoading } = storeToRefs(useChatsStore());
-const isError = ref(false);
-const isLoading = ref(false);
-const labelledChats = ref<Array<previewChat>>([
-  {
-    id:1,
-    label: "Behavioural Interview",
-    title: "Behavioural Interview",
-    created_at: "2024-02-09 22:01:47.67+00",
-    creator: "Ron Pile",
-  },
-  {
-    id:2,
-    label: "Tecnical Interview",
-    title: "Tecnical Interview",
-    created_at: "2024-02-23 03:50:33.929+00",
-    creator: "David Isinta",
-  },
-]);
-const currentChat = ref<Chats | undefined>();
-
-const mountedState = ref(false);
-const createMode = ref(false);
-async function updateCurrChat(val: any) {
-  currentChat.value = val;
-
-  // console.log(`selected`, val);
-}
-
-// watchEffect(() => {
-//   if (chats.value) {
-
-//     labelledChats.value = chats.value?.map((chat) => {
-//       return { label: "", ...chat };
-//     });
-//     // console.log(`changing chats in store`);
-//   }
-// });
-// watchEffect(() => {
-//   if (currentChat.value) {
-//     chat.value = currentChat.value;
-//     createMode.value = false;
-//     // console.log(`Changing current post`);
-//   }
-// });
-
-// function addChat(payload: Chats) {
-//   useChatsStore().chats.push(payload);
-
-//   createMode.value = false;
-// }
-// function cancelChat() {
-//   createMode.value = false;
-// }
-// await useChatsStore().fetchAllChats();
-
-definePageMeta({
-  keepalive: true,
+const interviewMode=ref(false)
+const isAudioOn = ref(false);
+const timeSpent=ref(0)
+const speech = useSpeechRecognition({
+  lang: "en-US",
+  continuous: true,
+  interimResults: true,
 });
+
+
+const { isListening, result, start, stop, isSupported, isFinal, error } =
+  speech;
+const { pause, resume, isActive } = useIntervalFn(() => {
+  timeSpent.value+=1
+}, 1000,{immediate:false})
+
+function controlSpeech() {
+
+  result.value=''
+  if (isListening.value) {
+    stop();
+
+  } else {
+    start();
+  }
+}
+watchEffect(() => {
+  console.log(`Is listening`, isListening.value);
+});
+
+watchEffect(() => {
+  if(interviewMode.value){
+    resume()
+  } else{
+    pause()
+  }
+})
+
+
 </script>
+
+<style scoped></style>
