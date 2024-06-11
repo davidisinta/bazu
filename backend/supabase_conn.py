@@ -9,7 +9,7 @@ supabase: Client = create_client(url, key)
 def main():
 
     print(f"url is: {url}")
-    response = supabase.table('countries').select("*").execute()
+    response = supabase.table('Prep_QnA').select("*").execute()
     print(response)
 
 

@@ -1,7 +1,5 @@
 import os
 from dotenv import load_dotenv
-
-# Add Azure OpenAI package
 from openai import AzureOpenAI
 
 #
@@ -72,10 +70,6 @@ def main():
 
             # Print generated text
             print("Summary: " + generated_text + "\n")
-
-
-
-
 
 
 
