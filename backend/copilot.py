@@ -76,12 +76,48 @@ async def get_messages():
 
 
 
-
-
-
 # have a method to save question and answer pairs.
 # when you send a message, save the question, and have an array of answers associated with the qn
 # when you save an answer, get the original qn and save that particular answer
+
+
+questions_instructions = """ Generate a behavioural question for an interviewer, when 
+the question is answered you will critique the response on a scale of 1-10 and offer feedback.
+            """
+
+message_contents = [{"role": "system", "content": questions_instructions}]
+
+# generate interview qn
+@router.get("/copilot/generate/question")
+async def generate_question():
+
+    global message_contents
+
+    response = client.chat.completions.create(
+        model=azure_oai_deployment,
+        temperature=0.7,
+        max_tokens=1200,
+        messages=message_contents
+    )
+
+    generated_text = response.choices[0].message.content
+
+    message_contents.append({"role": "assistant", "content": generated_text})
+
+    return {"message": generated_text}
+
+
+
+# process interview qn answer - returns feedback of the written
+# response
+
+
+
+# refine answer
+
+
+
+# save question and answer pair
 
 
 
