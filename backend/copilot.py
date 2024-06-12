@@ -53,16 +53,36 @@ async def send_message(message: Message):
 
     messages_array.append({"role": "assistant", "content": generated_text})
 
-
-    # supabase tester on this module
-    response = supabase.table('Prep_QnA').select("*").execute()
-    print(response)
-
     return {"message": generated_text}
 
 
 @router.get("/copilot/messages")
 async def get_messages():
+    """
+    Get all conversational messages sent to bazu AI
+    """
     return messages_array
+
+
+
+# have an endpoint for responding to interview qns, when an answer is received,
+#it is given a rating, and feedback, the user can decide to refine the answer with AI,
+# after refinement, the user can save the qna
+
+
+#have a method that will call gpt model and refine the answer for you,
+# after answer is refined, you can save the refined answer & qn.
+
+
+
+
+
+
+
+# have a method to save question and answer pairs.
+# when you send a message, save the question, and have an array of answers associated with the qn
+# when you save an answer, get the original qn and save that particular answer
+
+
 
 
