@@ -125,6 +125,8 @@ webencodings = "==0.5.1"
 websocket-client = "==1.7.0"
 werkzeug = "==3.0.1"
 fastapi = "*"
+openai = "*"
+supabase = "*"
 
 [dev-packages]
 
