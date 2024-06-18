@@ -6,6 +6,7 @@ from openai import AzureOpenAI
 from supabase_conn import supabase
 from datetime import datetime
 from typing import Optional
+import json
 
 router = APIRouter()
 
@@ -98,7 +99,9 @@ async def rate_answer(qna: QnA):
     messages_array.append({"role": "user", "content": qna.answer})
 
     rating_instructions = f"""Rate the following answer to the question: "{qna.question}" 
-        on a scale of 1-10 and provide feedback: {qna.answer}"""
+    on a scale of 1-10 and provide feedback: {qna.answer}. The returned response 
+    must be a JSON object with two keys: "rating" which is an integer between 1-10 and 
+    "analysis" which is a string containing the written evaluation."""
 
     messages_array.append({"role": "system", "content": rating_instructions})
 
@@ -109,9 +112,13 @@ async def rate_answer(qna: QnA):
         messages=messages_array
     )
 
+
     rating_feedback = response.choices[0].message.content
 
-    return {"rating_feedback": rating_feedback}
+    # Convert the JSON string to a dictionary
+    response_dict = json.loads(rating_feedback)
+
+    return response_dict
 
 @router.post("/copilot/refine_answer")
 async def refine_answer(qna: QnA):
