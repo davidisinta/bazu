@@ -4,14 +4,20 @@ import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
 from supabase_conn import supabase
-
+from datetime import datetime
+from typing import Optional
+import json
 
 router = APIRouter()
-
 
 class Message(BaseModel):
     text: str
 
+class QnA(BaseModel):
+    question: str
+    answer: str
+    rating: Optional[int] = None
+    analysis: Optional[str] = None
 
 load_dotenv()
 
@@ -25,22 +31,20 @@ client = AzureOpenAI(
     api_version="2024-02-15-preview"
 )
 
-system_message = """I am a behavioural interview copilot who has vast experience in 
+system_message = """I am a behavioural interview copilot who has vast experience in
         helping candidates prep for interviews, I can ask them potential questions that could come up in
         interviews and rate their written answers to help them improve. I ask questions one by one, wait for
         a short written response, rate the answer and continue with the next question.
-            """
+        """
 
 messages_array = [{"role": "system", "content": system_message}]
 
+
 @router.post("/copilot/message")
 async def send_message(message: Message):
-
-    message = message.dict()
-
     global messages_array
 
-    messages_array.append({"role": "user", "content": message["text"]})
+    messages_array.append({"role": "user", "content": message.text})
 
     response = client.chat.completions.create(
         model=azure_oai_deployment,
@@ -59,38 +63,19 @@ async def send_message(message: Message):
 @router.get("/copilot/messages")
 async def get_messages():
     """
-    Get all conversational messages sent to bazu AI
+    Get all conversational messages sent to copilot AI
     """
     return messages_array
 
-
-
-# have an endpoint for responding to interview qns, when an answer is received,
-#it is given a rating, and feedback, the user can decide to refine the answer with AI,
-# after refinement, the user can save the qna
-
-
-#have a method that will call gpt model and refine the answer for you,
-# after answer is refined, you can save the refined answer & qn.
-
-
-
-
-# have a method to save question and answer pairs.
-# when you send a message, save the question, and have an array of answers associated with the qn
-# when you save an answer, get the original qn and save that particular answer
-
-
-questions_instructions = """ Generate a behavioural question for an interviewer, when 
+questions_instructions = """Generate a behavioural question for an interviewer, when 
 the question is answered you will critique the response on a scale of 1-10 and offer feedback.
-            """
+        """
 
 message_contents = [{"role": "system", "content": questions_instructions}]
 
-# generate interview qn
+
 @router.get("/copilot/generate/question")
 async def generate_question():
-
     global message_contents
 
     response = client.chat.completions.create(
@@ -104,21 +89,74 @@ async def generate_question():
 
     message_contents.append({"role": "assistant", "content": generated_text})
 
+    print(f"the generated qn is of type {type(generated_text)}")
+
     return {"message": generated_text}
 
 
+@router.post("/copilot/rate_answer")
+async def rate_answer(qna: QnA):
+    global messages_array
 
-# process interview qn answer - returns feedback of the written
-# response
+    messages_array.append({"role": "user", "content": qna.answer})
+
+    rating_instructions = f"""Rate the following answer to the question: "{qna.question}" 
+    on a scale of 1-10 and provide feedback: {qna.answer}. The returned response 
+    must be a JSON object with two keys: "rating" which is an integer between 1-10 and 
+    "analysis" which is a string containing the written evaluation."""
+
+    messages_array.append({"role": "system", "content": rating_instructions})
+
+    response = client.chat.completions.create(
+        model=azure_oai_deployment,
+        temperature=0.7,
+        max_tokens=1200,
+        messages=messages_array
+    )
 
 
+    rating_feedback = response.choices[0].message.content
 
-# refine answer
+    # Convert the JSON string to a dictionary
+    response_dict = json.loads(rating_feedback)
+
+    return response_dict
 
 
+@router.post("/copilot/refine_answer")
+async def refine_answer(qna: QnA):
+    refinement_array = []
+    refinement_instructions = f"""Refine the following answer to the question: "{qna.question}" 
+        and improve it: {qna.answer}"""
 
-# save question and answer pair
+    refinement_array.append({"role": "system", "content": refinement_instructions})
 
+    response = client.chat.completions.create(
+        model=azure_oai_deployment,
+        temperature=0.7,
+        max_tokens=1200,
+        messages=refinement_array
+    )
 
+    refined_answer = response.choices[0].message.content
 
+    return {"refined_answer": refined_answer}
+
+@router.post("/copilot/save_qna")
+async def save_qna(qna: QnA):
+    created_at = datetime.utcnow().isoformat()
+
+    try:
+        supabase.table("Prep_QnA").insert({
+            "question": qna.question,
+            "created_at": created_at,
+            "answer": qna.answer,
+            "rating": qna.rating,
+            "analysis": qna.analysis
+        }).execute()
+
+    except Exception as e:
+        return {"error": str(e)}
+
+    return {"message": "Q&A pair saved successfully"}
 
