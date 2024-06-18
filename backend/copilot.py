@@ -146,16 +146,21 @@ async def refine_answer(qna: QnA):
 async def save_qna(qna: QnA):
     created_at = datetime.utcnow().isoformat()
 
-    response = supabase.table("Prep_QnA").insert({
-        "question": qna.question,
-        "created_at": created_at,
-        "answer": qna.answer,
-        "rating": qna.rating,
-        "analysis": qna.analysis
-    }).execute()
+    response = None
 
-    if response.status_code != 201:
-        raise HTTPException(status_code=500, detail="Failed to save Q&A pair")
+    try:
+        response = supabase.table("Prep_QnA").insert({
+            "question": qna.question,
+            "created_at": created_at,
+            "answer": qna.answer,
+            "rating": qna.rating,
+            "analysis": qna.analysis
+        }).execute()
+
+    except Exception as e:
+        return {"error": str(e)}
+
+
 
     return {"message": "Q&A pair saved successfully"}
 
