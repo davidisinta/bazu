@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from openai import AzureOpenAI
 from supabase_conn import supabase
 from datetime import datetime
+from typing import Optional
 
 router = APIRouter()
 
@@ -14,8 +15,8 @@ class Message(BaseModel):
 class QnA(BaseModel):
     question: str
     answer: str
-    rating: int
-    analysis: str
+    rating: Optional[int] = None
+    analysis: Optional[str] = None
 
 load_dotenv()
 
