@@ -6,21 +6,22 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxtjs/tailwindcss",
     "@vueuse/nuxt",
-    // "@vite-pwa/nuxt",
     "nuxt-icon",
     "nuxt-ark-ui",
     "nuxt-primevue",
     "@nuxt/image",
+    "@hebilicious/vue-query-nuxt",
   ],
-
-  ssr: false,//since this is frontend only
+  devServer:{
+    port:3002
+  },
+  ssr: false, //since this is frontend only
   router: {
     options: {
       scrollBehaviorType: "smooth",
     },
   },
   app: {
-
     head: {
       titleTemplate: "%s | Bazu",
       meta: [
@@ -44,6 +45,7 @@ export default defineNuxtConfig({
         "Listbox",
         "Splitter",
         "SplitterPanel",
+        "Rating",
       ],
     },
     importPT: { as: "Tailwind", from: "~/primevue-tailwind-pt.ts" },

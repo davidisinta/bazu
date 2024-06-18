@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@ark-ui/vue": "^0.8.0",
+    "@hebilicious/vue-query-nuxt": "^0.3.0",
     "@pinia/nuxt": "^0.5.1",
+    "@tanstack/vue-query": "^5.45.0",
     "nuxt": "^3.11.2",
     "pinia": "^2.1.7",
     "primeicons": "^6.0.1",

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <h1>User Details</h1>
+        id:{{ id }}
     </div>
 </template>
 
 <script setup lang="ts">
-
+const id = useRoute().params.id
 </script>

@@ -1,116 +1,118 @@
 <template>
-  <div
-    class="grid grid-cols-4 gap-[10px] h-[90%] w-full items-start relative ml-2"
-  >
-    <List
-      :is-error="isError"
-      :selected-option="currentChat"
-      error-label="Error Loading Chats"
-      loading-label="Loading chats."
-      :is-loading="isLoading"
-      :create-mode="createMode"
-      :options="(labelledChats as Array<any>)"
-      :list-props="{
-        optionValue: 'id',
-        filter: true,
-        filterFields: ['title'],
-        optionLabel: 'label',
-        dataKey: 'id',
-        selectionMessage:
-          'Press Tab to explore the chat. To return, press escape and continue browsing other chats in this list.',
-        emptySelectionMessage: 'No chat selected',
-        emptyMessage: 'Loading Chats. ',
-        emptyFilterMessage:
-          'No Chats Found. Try using chat tags relating to the chat',
-        filterMessage: '{0} chats found. Use arrow keys to browse the result. ',
-        filterPlaceholder: 'Search Chat',
-      }"
-      @update-selection="updateCurrChat"
-    >
-      <template #previewSlot="slotProps">
-        <ChatPreview
-          @update-aria="
-            (ariaUpdate) => {
-              if (labelledChats?.length) {
-                labelledChats[slotProps.index].label = ariaUpdate;
-              }
-            }
-          "
-          :heading="slotProps.option.title"
-          :timestamp="slotProps.option.created_at"
-        />
+  <div class="">
+    <NuxtLayout name="sections">
+      <template #list>
+        <List
+          :is-error="isError"
+          :selected-option="currentInterview"
+          error-label="Error Loading Interviews"
+          loading-label="Loading interviews."
+          :is-loading="isLoading"
+          :create-mode="createMode"
+          :options="(labelledInterviews as Array<any>)"
+          :list-props="{
+            optionValue: 'id',
+            filter: true,
+            filterFields: ['title'],
+            optionLabel: 'label',
+            dataKey: 'id',
+            selectionMessage:
+              'Press Tab to explore the interview. To return, press escape and continue browsing other interviews in this list.',
+            emptySelectionMessage: 'No interview selected',
+            emptyMessage: 'Loading Interviews. ',
+            emptyFilterMessage:
+              'No Interviews Found. Try using interview tags relating to the interview',
+            filterMessage:
+              '{0} interviews found. Use arrow keys to browse the result. ',
+            filterPlaceholder: 'Search Interview',
+          }"
+          @update-selection="updateCurrInterview"
+        >
+          <template #previewSlot="slotProps">
+            <InterviewPreview
+              @update-aria="
+                (ariaUpdate) => {
+                  if (labelledInterviews?.length) {
+                    labelledInterviews[slotProps.index].label = ariaUpdate;
+                  }
+                }
+              "
+              :heading="slotProps.option.title"
+              :timestamp="slotProps.option.created_at"
+              :rating="slotProps.option.rating"
+            />
+          </template>
+        </List>
       </template>
-    </List>
-
-    <div
-      class="col-span-3 h-screen overflow-y-scroll scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-slate-200"
-    >
-      <NuxtPage :page-key="(route) => route.fullPath" :keepalive="false" />
-    </div>
+      <template #noneSelected>Select an interview to view it on this panel</template>
+      <div>
+        <NuxtPage :page-key="(route) => route.fullPath" :keepalive="false" />
+      </div>
+    </NuxtLayout>
   </div>
 </template>
 
 <script setup lang="ts">
-interface previewChat extends Chats {
+interface previewInterview extends Interviews {
   label: string;
 }
-// const { chats, chat, isError, isLoading } = storeToRefs(useChatsStore());
+// const { interviews, interview, isError, isLoading } = storeToRefs(useInterviewsStore());
 const isError = ref(false);
 const isLoading = ref(false);
-const labelledChats = ref<Array<previewChat>>([
+const labelledInterviews = ref<Array<previewInterview>>([
   {
-    id:1,
+    id: 1,
     label: "Behavioural Interview",
     title: "Behavioural Interview",
     created_at: "2024-02-09 22:01:47.67+00",
-    creator: "Ron Pile",
+    rating: 4,
   },
   {
-    id:2,
+    id: 2,
     label: "Tecnical Interview",
     title: "Tecnical Interview",
     created_at: "2024-02-23 03:50:33.929+00",
-    creator: "David Isinta",
+    rating: 3,
   },
 ]);
-const currentChat = ref<Chats | undefined>();
+const currentInterview = ref<Interviews | undefined>();
 
-const mountedState = ref(false);
 const createMode = ref(false);
-async function updateCurrChat(val: any) {
-  currentChat.value = val;
+async function updateCurrInterview(val: any) {
+  currentInterview.value = val;
 
-  // console.log(`selected`, val);
+  console.log(`selected`, val);
+  navigateTo(`/past-interviews/${val.id}`);
 }
 
 // watchEffect(() => {
-//   if (chats.value) {
+//   if (interviews.value) {
 
-//     labelledChats.value = chats.value?.map((chat) => {
-//       return { label: "", ...chat };
+//     labelledInterviews.value = interviews.value?.map((interview) => {
+//       return { label: "", ...interview };
 //     });
-//     // console.log(`changing chats in store`);
+//     // console.log(`changing interviews in store`);
 //   }
 // });
 // watchEffect(() => {
-//   if (currentChat.value) {
-//     chat.value = currentChat.value;
+//   if (currentInterview.value) {
+//     interview.value = currentInterview.value;
 //     createMode.value = false;
 //     // console.log(`Changing current post`);
 //   }
 // });
 
-// function addChat(payload: Chats) {
-//   useChatsStore().chats.push(payload);
+// function addInterview(payload: Interviews) {
+//   useInterviewsStore().interviews.push(payload);
 
 //   createMode.value = false;
 // }
-// function cancelChat() {
+// function cancelInterview() {
 //   createMode.value = false;
 // }
-// await useChatsStore().fetchAllChats();
+// await useInterviewsStore().fetchAllInterviews();
 
 definePageMeta({
-  keepalive: true,
+  layout: false,
 });
 </script>
