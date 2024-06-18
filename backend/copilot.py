@@ -1,4 +1,4 @@
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import APIRouter
 from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
@@ -10,14 +10,17 @@ import json
 
 router = APIRouter()
 
+
 class Message(BaseModel):
     text: str
+
 
 class QnA(BaseModel):
     question: str
     answer: str
     rating: Optional[int] = None
     analysis: Optional[str] = None
+
 
 load_dotenv()
 
@@ -67,6 +70,7 @@ async def get_messages():
     """
     return messages_array
 
+
 questions_instructions = """Generate a behavioural question for an interviewer, when 
 the question is answered you will critique the response on a scale of 1-10 and offer feedback.
         """
@@ -114,7 +118,6 @@ async def rate_answer(qna: QnA):
         messages=messages_array
     )
 
-
     rating_feedback = response.choices[0].message.content
 
     # Convert the JSON string to a dictionary
@@ -142,6 +145,7 @@ async def refine_answer(qna: QnA):
 
     return {"refined_answer": refined_answer}
 
+
 @router.post("/copilot/save_qna")
 async def save_qna(qna: QnA):
     created_at = datetime.utcnow().isoformat()
@@ -159,4 +163,3 @@ async def save_qna(qna: QnA):
         return {"error": str(e)}
 
     return {"message": "Q&A pair saved successfully"}
-
