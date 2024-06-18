@@ -39,6 +39,7 @@ system_message = """I am a behavioural interview copilot who has vast experience
 
 messages_array = [{"role": "system", "content": system_message}]
 
+
 @router.post("/copilot/message")
 async def send_message(message: Message):
     global messages_array
@@ -58,6 +59,7 @@ async def send_message(message: Message):
 
     return {"message": generated_text}
 
+
 @router.get("/copilot/messages")
 async def get_messages():
     """
@@ -70,6 +72,7 @@ the question is answered you will critique the response on a scale of 1-10 and o
         """
 
 message_contents = [{"role": "system", "content": questions_instructions}]
+
 
 @router.get("/copilot/generate/question")
 async def generate_question():
@@ -89,6 +92,7 @@ async def generate_question():
     print(f"the generated qn is of type {type(generated_text)}")
 
     return {"message": generated_text}
+
 
 @router.post("/copilot/rate_answer")
 async def rate_answer(qna: QnA):
@@ -119,10 +123,6 @@ async def rate_answer(qna: QnA):
     return response_dict
 
 
-
-
-
-
 @router.post("/copilot/refine_answer")
 async def refine_answer(qna: QnA):
     refinement_array = []
@@ -146,10 +146,8 @@ async def refine_answer(qna: QnA):
 async def save_qna(qna: QnA):
     created_at = datetime.utcnow().isoformat()
 
-    response = None
-
     try:
-        response = supabase.table("Prep_QnA").insert({
+        supabase.table("Prep_QnA").insert({
             "question": qna.question,
             "created_at": created_at,
             "answer": qna.answer,
@@ -159,8 +157,6 @@ async def save_qna(qna: QnA):
 
     except Exception as e:
         return {"error": str(e)}
-
-
 
     return {"message": "Q&A pair saved successfully"}
 
