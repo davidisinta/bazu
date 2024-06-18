@@ -90,8 +90,6 @@ async def generate_question():
 
     return {"message": generated_text}
 
-
-#this is the endpoint that accepsts a users answer
 @router.post("/copilot/rate_answer")
 async def rate_answer(qna: QnA):
     global messages_array
@@ -120,18 +118,24 @@ async def rate_answer(qna: QnA):
 
     return response_dict
 
+
+
+
+
+
 @router.post("/copilot/refine_answer")
 async def refine_answer(qna: QnA):
+    refinement_array = []
     refinement_instructions = f"""Refine the following answer to the question: "{qna.question}" 
         and improve it: {qna.answer}"""
 
-    messages_array.append({"role": "system", "content": refinement_instructions})
+    refinement_array.append({"role": "system", "content": refinement_instructions})
 
     response = client.chat.completions.create(
         model=azure_oai_deployment,
         temperature=0.7,
         max_tokens=1200,
-        messages=messages_array
+        messages=refinement_array
     )
 
     refined_answer = response.choices[0].message.content
