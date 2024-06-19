@@ -27,7 +27,7 @@
         :select-on-focus="false"
         :filter="listProps.filter"
         :filter-fields="listProps.filterFields"
-        :option-label="listProps.optionLabel"
+        :option-label="()=>``"
         :data-key="listProps.dataKey"
         :selection-message="listProps.selectionMessage"
         :empty-selection-message="listProps.emptySelectionMessage"
@@ -81,7 +81,7 @@ interface props {
     filterFields: Array<string>;
     optionValue?: string;
     /**label - the object field with the label */
-    optionLabel: string;
+    optionLabel?: string;
     /**data key of the element. example: post_id */
     dataKey: string;
     /**"example: Press Tab to explore the post. To return, press escape and continue browsing other post in this list." */

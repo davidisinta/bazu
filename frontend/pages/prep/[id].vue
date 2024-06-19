@@ -1,6 +1,7 @@
 <template>
     <div>
-        id:{{ id }}
+       <h2> Title for Interview id:{{ id }}</h2> <br><br>
+        <ChatView/>
     </div>
 </template>
 

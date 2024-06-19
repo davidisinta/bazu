@@ -11,9 +11,10 @@ export default defineNuxtConfig({
     "nuxt-primevue",
     "@nuxt/image",
     "@hebilicious/vue-query-nuxt",
+    "@nuxtjs/supabase",
   ],
-  devServer:{
-    port:3002
+  devServer: {
+    port: 3002,
   },
   ssr: false, //since this is frontend only
   router: {
@@ -46,6 +47,7 @@ export default defineNuxtConfig({
         "Splitter",
         "SplitterPanel",
         "Rating",
+        "Card",
       ],
     },
     importPT: { as: "Tailwind", from: "~/primevue-tailwind-pt.ts" },
@@ -69,6 +71,14 @@ export default defineNuxtConfig({
   pinia: {
     /* autoImports: ["defineStore", "skipHydrate", "storeToRefs"], */
     // storesDirs:['./stores*','./stores']
+  },
+  supabase: {
+    redirect: false,
+    redirectOptions: {
+      login: "/login",
+      callback: "/confirm",
+      exclude: ["/signup"],
+    },
   },
 
   "ark-ui": {

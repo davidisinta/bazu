@@ -20,14 +20,14 @@
       </div>
     </div>
     <hr class=" bg-sky-700 h-[2px]"/>
-    <div class="h-[35%] pt-4 w-[80%] grid grid-cols-3 mx-auto">
-      <AccountComponent title="Interviews">
+    <div class="h-[35%] pt-4 w-[80%] grid grid-cols-3 mx-auto gap-4">
+      <AccountComponent class="my-auto" title="Interviews">
         <span class="font-bold text-2xl">{{ interviews }}</span>
       </AccountComponent>
-      <AccountComponent title="Overall Rating">
+      <AccountComponent class="my-auto" title="Overall Rating">
         <span class="font-bold text-2xl">{{ interviewRating }}</span>
       </AccountComponent>
-      <AccountComponent title="Metrics">
+      <AccountComponent class="my-auto" title="Metrics">
         <div class="w-full my-2">
           <span>Confidence: </span
           ><span class="font-semibold">{{ metrics.confidence }}</span>

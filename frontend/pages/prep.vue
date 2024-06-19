@@ -14,7 +14,6 @@
             optionValue: 'id',
             filter: true,
             filterFields: ['title'],
-            optionLabel: 'label',
             dataKey: 'id',
             selectionMessage:
               'Press Tab to explore the chat. To return, press escape and continue browsing other chats in this list.',
@@ -30,20 +29,34 @@
         >
           <template #previewSlot="slotProps">
             <ChatPreview
-              @update-aria="
-                (ariaUpdate) => {
-                  if (labelledChats?.length) {
-                    labelledChats[slotProps.index].label = ariaUpdate;
-                  }
-                }
-              "
               :heading="slotProps.option.title"
               :timestamp="slotProps.option.created_at"
             />
           </template>
         </List>
       </template>
-      <template #noneSelected>Select a chat to view it on this panel</template>
+      <template #noneSelected>
+        <div class="w-[80%] h-[80%] flex flex-col  justify-between">
+          <h2>Quick Actions based on your profile</h2>
+          <div class="w-[90%] grid grid-cols-3 gap-4">
+            <PrepQuickactions
+              v-for="{  action } in actions"
+              :action="action"
+              class="col-span-1"
+           
+            />
+          </div>
+          <Inputbox
+            placeholder="Ask me anything you need prep for"
+            v-model="prepQuestion"
+            @submit="askQuestion"
+          >
+            <template #submitIcon>
+              <Icon name="mdi:send-outline" size="32" />
+            </template>
+          </Inputbox>
+        </div>
+      </template>
       <div>
         <NuxtPage :page-key="(route) => route.fullPath" :keepalive="false" />
       </div>
@@ -58,6 +71,7 @@ interface previewChat extends Chats {
 // const { chats, chat, isError, isLoading } = storeToRefs(useChatsStore());
 const isError = ref(false);
 const isLoading = ref(false);
+const prepQuestion = ref("");
 const labelledChats = ref<Array<previewChat>>([
   {
     id: 1,
@@ -84,6 +98,15 @@ async function updateCurrChat(val: any) {
   navigateTo(`/prep/${val.id}`);
 }
 
+const actions = ref([
+  { title: "Microsoft Prep Interview", action: "Microsoft Prep Interview" },
+  { action: "Technical jargon during interview" },
+  { action: "How to buy time during interview" },
+]);
+
+function askQuestion() {
+  console.log(`submit event to ask prep question`);
+}
 // watchEffect(() => {
 //   if (chats.value) {
 
@@ -112,6 +135,6 @@ async function updateCurrChat(val: any) {
 // await useChatsStore().fetchAllChats();
 
 definePageMeta({
-    layout:false
-})
+  layout: false,
+});
 </script>

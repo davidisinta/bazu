@@ -14,7 +14,6 @@
             optionValue: 'id',
             filter: true,
             filterFields: ['title'],
-            optionLabel: 'label',
             dataKey: 'id',
             selectionMessage:
               'Press Tab to explore the interview. To return, press escape and continue browsing other interviews in this list.',
@@ -30,22 +29,18 @@
         >
           <template #previewSlot="slotProps">
             <InterviewPreview
-              @update-aria="
-                (ariaUpdate) => {
-                  if (labelledInterviews?.length) {
-                    labelledInterviews[slotProps.index].label = ariaUpdate;
-                  }
-                }
-              "
-              :heading="slotProps.option.title"
-              :timestamp="slotProps.option.created_at"
-              :rating="slotProps.option.rating"
-            />
+            :heading="slotProps.option.title"
+            :timestamp="slotProps.option.created_at"
+            :rating="slotProps.option.rating" />
           </template>
         </List>
       </template>
-      <template #noneSelected>Select an interview to view it on this panel</template>
-      <div>
+      <template #noneSelected>
+        <p class="w-full text-center text-3xl">
+          Select an interview to view it on this panel
+        </p>
+      </template>
+      <div class="h-[90vh] ">
         <NuxtPage :page-key="(route) => route.fullPath" :keepalive="false" />
       </div>
     </NuxtLayout>
@@ -56,7 +51,7 @@
 interface previewInterview extends Interviews {
   label: string;
 }
-// const { interviews, interview, isError, isLoading } = storeToRefs(useInterviewsStore());
+
 const isError = ref(false);
 const isLoading = ref(false);
 const labelledInterviews = ref<Array<previewInterview>>([
@@ -85,34 +80,8 @@ async function updateCurrInterview(val: any) {
   navigateTo(`/past-interviews/${val.id}`);
 }
 
-// watchEffect(() => {
-//   if (interviews.value) {
-
-//     labelledInterviews.value = interviews.value?.map((interview) => {
-//       return { label: "", ...interview };
-//     });
-//     // console.log(`changing interviews in store`);
-//   }
-// });
-// watchEffect(() => {
-//   if (currentInterview.value) {
-//     interview.value = currentInterview.value;
-//     createMode.value = false;
-//     // console.log(`Changing current post`);
-//   }
-// });
-
-// function addInterview(payload: Interviews) {
-//   useInterviewsStore().interviews.push(payload);
-
-//   createMode.value = false;
-// }
-// function cancelInterview() {
-//   createMode.value = false;
-// }
-// await useInterviewsStore().fetchAllInterviews();
-
 definePageMeta({
   layout: false,
+  title: "Past Interviews",
 });
 </script>

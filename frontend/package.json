@@ -36,6 +36,7 @@
     "@iconify/tailwind": "^1.1.1",
     "@nuxt/devtools": "^1.0.6",
     "@nuxt/image": "^1.0.0",
+    "@nuxtjs/supabase": "^1.2.2",
     "@nuxtjs/tailwindcss": "^6.11.4",
     "@types/node": "^18.16.19",
     "@vueuse/core": "^10.2.1",
